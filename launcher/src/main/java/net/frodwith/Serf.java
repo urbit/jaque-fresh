@@ -134,7 +134,7 @@ public class Serf implements Thread.UncaughtExceptionHandler
     this.truffleContext = Context
                         .newBuilder("nock")
                         .logHandler(logHandler)
-                        .option("nock.memo", "14096")
+                        .option("nock.memo", "99999")
                         .allowAllAccess(true)
                         .build();
     this.truffleContext.initialize("nock");
