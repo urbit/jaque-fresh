@@ -19,7 +19,6 @@ import net.frodwith.jaque.exception.NockException;
 public abstract class LossNode extends SubjectNode {
   @Specialization
   protected Object loss(Object a, Object b) {
-    System.err.println("loss");
     try {
       return List.loss(a, b);
     }

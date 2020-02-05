@@ -381,9 +381,6 @@ public class ArvoJetDashboard {
                     new JetArm[0],
                     new JetHook[0],
                     new ChildCore[] {
-                      // TODO: I'm unsure about the jet matching here. Or: Is
-                      // this loss?
-                      //
                       offsetGate("loss", Axis.get(63L),
                                  (c, ax) -> LossNodeGen.create(
                                      new SlotExpressionNode(Axis.SAM_2),
