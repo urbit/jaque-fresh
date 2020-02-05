@@ -76,6 +76,7 @@ import net.frodwith.jaque.nodes.jet.crypto.EdScalarmultNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdScalarmultBaseNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdAddScalarmultScalarmultBaseNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdAddDoubleScalarmultNodeGen;
+import net.frodwith.jaque.nodes.jet.crypto.Ripemd160NodeGen;
 
 import javax.crypto.Cipher;
 import net.frodwith.jaque.nodes.jet.crypto.AesCbcNodeGen;
@@ -374,6 +375,19 @@ public class ArvoJetDashboard {
                       aesCbcCore("cbcc", 32),
                     });
 
+  private static final ChildCore ripemdCore =
+      new ChildCore("ripemd",
+                    Axis.get(31L),
+                    new HashCode[0],
+                    new JetArm[0],
+                    new JetHook[0],
+                    new ChildCore[] {
+                      gate("ripemd-160", (c, ax) ->
+                           Ripemd160NodeGen.create(
+                               new SlotExpressionNode(Axis.SAM_2),
+                               new SlotExpressionNode(Axis.SAM_3))),
+                    });
+
   private static final ChildCore hexLayer =
       new ChildCore("hex",
                     Axis.CONTEXT,
@@ -388,9 +402,16 @@ public class ArvoJetDashboard {
                       offsetGate("lore", Axis.get(63L),
                                  (c, ax) -> LoreNodeGen.create(
                                      new SlotExpressionNode(Axis.SAMPLE))),
+                      // lune appears to never be used in the codebase?
 
                       coedCore,
-                      aesCore
+                      aesCore,
+
+                      // hmac
+                      // argon
+                      // blake
+                      ripemdCore,
+                      // secp
                     });
 
   private static final ChildCore jetLayerFive =

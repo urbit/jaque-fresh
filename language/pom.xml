@@ -150,6 +150,17 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <!-- Strip out bouncycastle's signatures when building our uberjar. -->
+              <filters>
+                  <filter>
+                      <artifact>*:*</artifact>
+                      <excludes>
+                          <exclude>META-INF/*.SF</exclude>
+                          <exclude>META-INF/*.DSA</exclude>
+                          <exclude>META-INF/*.RSA</exclude>
+                      </excludes>
+                  </filter>
+              </filters>              
               <finalName>nock-language</finalName>
               <artifactSet>
                 <excludes>
@@ -228,6 +239,11 @@
       <artifactId>slf4j-jdk14</artifactId>
       <version>1.7.27</version>
     </dependency>
+    <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk14</artifactId>
+        <version>1.58</version>
+    </dependency>    
     <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/native-maven-plugin -->
     <dependency>
         <groupId>org.codehaus.mojo</groupId>

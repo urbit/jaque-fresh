@@ -12,6 +12,9 @@ import org.graalvm.options.OptionValues;
 import org.graalvm.options.OptionDescriptor;
 import org.graalvm.options.OptionDescriptors;
 
+import java.security.Security;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.CallTarget;
@@ -62,6 +65,9 @@ public final class NockLanguage extends TruffleLanguage<NockContext> {
     List<OptionDescriptor> options = new ArrayList<>();
     NockOptions.describe(options);
     OPTION_DESCRIPTORS = OptionDescriptors.create(options);
+
+    // We must have bouncy castle to provide ripemd-160.
+    Security.addProvider(new BouncyCastleProvider());
   }
 
   private final Map<Dashboard,AstContext>

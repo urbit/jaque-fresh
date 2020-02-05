@@ -797,7 +797,7 @@ public final class HoonMath {
   }
 
   @TruffleBoundary
-  private static byte[] doSha(String algo, byte[] bytes) throws ExitException {
+  private static byte[] doDigest(String algo, byte[] bytes) throws ExitException {
     try {
       return MessageDigest.getInstance(algo).digest(bytes);
     }
@@ -810,7 +810,7 @@ public final class HoonMath {
       throws ExitException {
     int leni = Atom.requireInt(len);
     byte[] in = Atom.forceBytes(atom, leni);
-    return Atom.fromByteArray(doSha(algo, in));
+    return Atom.fromByteArray(doDigest(algo, in));
   }
 
   public static Object shal(Object len, Object atom) throws ExitException {
@@ -819,10 +819,16 @@ public final class HoonMath {
 
   public static Object shan(Object atom) throws ExitException {
     byte[] in = Atom.toByteArray(atom);
-    return Atom.fromByteArray(doSha("SHA-1", in), Atom.BIG_ENDIAN);
+    return Atom.fromByteArray(doDigest("SHA-1", in), Atom.BIG_ENDIAN);
   }
 
   public static Object shay(Object len, Object atom) throws ExitException {
     return sha_help(len, atom, "SHA-256");
+  }
+
+  public static Object ripemd160(Object len, Object atom) throws ExitException {
+    int leni = Atom.requireInt(len);
+    byte[] in = Atom.wordsToBytes(Atom.words(atom), leni,Atom.BIG_ENDIAN);
+    return Atom.fromByteArray(doDigest("RIPEMD160", in), Atom.BIG_ENDIAN);
   }
 }

@@ -77,6 +77,13 @@ public class MathTest {
                      HoonMath.shay(64L, 0L));
   }
 
+  @Test
+  public void ripemd160Examples() throws ExitException {
+    assertNounEquals("(ripemd-160 3 'abc')",
+                     simple("306.825.316.781.432.014.490.141.398.192.080.703.376.357.407.818"),
+                     HoonMath.ripemd160(3L, simple("6.513.249")));
+  }
+
   // subtraction reverses addition
   @Property
   public void addSub(@From(AtomGenerator.class) Object a,
