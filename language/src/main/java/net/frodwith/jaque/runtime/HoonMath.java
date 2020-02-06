@@ -15,6 +15,8 @@ import net.frodwith.jaque.exception.ExitException;
 import net.frodwith.jaque.exception.FailError;
 import net.frodwith.jaque.runtime.Equality;
 
+import org.bouncycastle.crypto.digests.Blake2bDigest;
+
 public final class HoonMath {
   public static int met(byte bloq, Object atom) {
     int gal, daz;
@@ -828,7 +830,31 @@ public final class HoonMath {
 
   public static Object ripemd160(Object len, Object atom) throws ExitException {
     int leni = Atom.requireInt(len);
-    byte[] in = Atom.wordsToBytes(Atom.words(atom), leni,Atom.BIG_ENDIAN);
+    byte[] in = Atom.wordsToBytes(Atom.words(atom), leni, Atom.BIG_ENDIAN);
     return Atom.fromByteArray(doDigest("RIPEMD160", in), Atom.BIG_ENDIAN);
+  }
+
+  @TruffleBoundary
+  public static Object blake2b(Object msgLen, Object msgObj,
+                               Object keyLen, Object keyObj,
+                               Object maxOutSizeObj) throws ExitException {
+    byte[] key = Atom.wordsToBytes(Atom.words(keyObj), Atom.requireInt(keyLen),
+                                   Atom.BIG_ENDIAN);
+    byte[] msg = Atom.wordsToBytes(Atom.words(msgObj), Atom.requireInt(msgLen),
+                                   Atom.BIG_ENDIAN);
+
+    int maxOutSize = Atom.requireInt(maxOutSizeObj);
+    Blake2bDigest digest;
+    if (key.length == 0) {
+      digest = new Blake2bDigest(null, maxOutSize, null, null);
+    } else {
+      digest = new Blake2bDigest(key, maxOutSize, null, null);
+    }
+    digest.update(msg, 0, msg.length);
+
+    byte[] output = new byte[maxOutSize];
+    digest.doFinal(output, 0);
+
+    return Atom.fromByteArray(output, Atom.BIG_ENDIAN);
   }
 }
