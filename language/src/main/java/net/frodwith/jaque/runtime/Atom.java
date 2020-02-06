@@ -371,6 +371,9 @@ public final class Atom {
   public static byte[] wordsToBytes(int[] wor, int bel, boolean endian) {
     int    w, i, b;
     byte[] buf = new byte[bel];
+    if (bel == 0) {
+      return buf;
+    }
     for (i = 0, b = 0;;) {
       w = wor[i++];
 

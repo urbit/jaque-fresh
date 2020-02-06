@@ -84,6 +84,27 @@ public class MathTest {
                      HoonMath.ripemd160(3L, simple("6.513.249")));
   }
 
+  @Test
+  public void blake2bExamples() throws ExitException {
+    assertNounEquals("(blake2b:blake:crypto [3 'msg'] [3 'key'] 64)",
+                     simple("5.044.497.255.341.091.859.203.473.184.154.881.211.109.563.697.098.563.303.175.175.160.892.428.918.284.300.138.977.603.011.582.951.105.353.679.179.092.445.480.852.392.661.809.456.306.547.771.949.898.381.540"),
+                     HoonMath.blake2b(3L, simple("6.779.757"),
+                                      3L, simple("7.955.819"),
+                                      64L));
+
+    assertNounEquals("(blake2b:blake:crypto [3 'msg'] [3 'key'] 16)",
+                     simple("124.103.998.576.575.927.634.254.325.900.101.595.959"),
+                     HoonMath.blake2b(3L, simple("6.779.757"),
+                                      3L, simple("7.955.819"),
+                                      16L));
+
+    assertNounEquals("(blake2b:blake:crypto 0^0x0 0^0x0 16)",
+                     simple("269.700.418.296.303.037.649.326.473.687.131.911.792"),
+                     HoonMath.blake2b(0L, simple("0"),
+                                      0L, simple("0"),
+                                      16L));
+  }
+
   // subtraction reverses addition
   @Property
   public void addSub(@From(AtomGenerator.class) Object a,

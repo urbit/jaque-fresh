@@ -77,6 +77,7 @@ import net.frodwith.jaque.nodes.jet.crypto.EdScalarmultBaseNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdAddScalarmultScalarmultBaseNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdAddDoubleScalarmultNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.Ripemd160NodeGen;
+import net.frodwith.jaque.nodes.jet.crypto.Blake2bNodeGen;
 
 import javax.crypto.Cipher;
 import net.frodwith.jaque.nodes.jet.crypto.AesCbcNodeGen;
@@ -375,6 +376,22 @@ public class ArvoJetDashboard {
                       aesCbcCore("cbcc", 32),
                     });
 
+  private static final ChildCore blakeCore =
+      new ChildCore("blake",
+                    Axis.get(31L),
+                    new HashCode[0],
+                    new JetArm[0],
+                    new JetHook[0],
+                    new ChildCore[] {
+                      gate("blake2b", (c, ax) ->
+                           Blake2bNodeGen.create(
+                               new SlotExpressionNode(Axis.get(24L)),
+                               new SlotExpressionNode(Axis.get(25L)),
+                               new SlotExpressionNode(Axis.get(52L)),
+                               new SlotExpressionNode(Axis.get(53L)),
+                               new SlotExpressionNode(Axis.SAM_7))),
+                    });
+
   private static final ChildCore ripemdCore =
       new ChildCore("ripemd",
                     Axis.get(31L),
@@ -409,7 +426,7 @@ public class ArvoJetDashboard {
 
                       // hmac
                       // argon
-                      // blake
+                      blakeCore,
                       ripemdCore,
                       // secp
                     });
