@@ -142,6 +142,8 @@ public class Serf implements Thread.UncaughtExceptionHandler
                      .getPolyglotBindings()
                      .getMember("nock");
 
+    this.nockRuntime.invokeMember("startTracing", "trace.json");
+
     this.nockRuntime.invokeMember("installArvoJets");
 
     fixupFileDescriptors();
