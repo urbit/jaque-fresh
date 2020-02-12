@@ -82,7 +82,7 @@ public final class NockLanguage extends TruffleLanguage<NockContext> {
       throws ExitException {
     Function<AstContext,NockFunction> f = functionFactories.get(formula);
     if ( null == f ) {
-      Function<AstContext,RootCallTarget>
+      Function<AstContext,FormulaParser.ParseResult>
         target = FormulaParser.parse(formula);
       f = (c) -> new NockFunction(c, target);
       functionFactories.put(formula, f);
@@ -192,8 +192,10 @@ public final class NockLanguage extends TruffleLanguage<NockContext> {
     // need an ast context (for dashboard)
     NockContext context = getCurrentContext(NockLanguage.class);
 
-    RootCallTarget target = FormulaParser.parseMapped(mapped)
+    FormulaParser.ParseResult result = FormulaParser.parseMapped(mapped)
       .apply(context.getAstContext());
+    RootCallTarget target = Truffle.getRuntime().createCallTarget(
+        new NockRootNode(result.context.language, result.sup, result.node));
     Formula interop = new Formula(target);
 
     return Truffle.getRuntime()

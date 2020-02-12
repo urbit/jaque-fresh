@@ -19,13 +19,16 @@ import net.frodwith.jaque.exception.ExitException;
 public final class Battery {
   public final Dashboard dashboard;
 
+  public Cell cell;
   private Optional<Optional<Registration>> hot;
   private Optional<Registration> cold;
 
   public Battery(Dashboard dashboard,
+                 Cell cell,
                  Optional<Registration> cold, 
                  Optional<Optional<Registration>> hot) {
     this.dashboard = dashboard;
+    this.cell = cell;
     this.hot = hot;
     this.cold = cold;
   }

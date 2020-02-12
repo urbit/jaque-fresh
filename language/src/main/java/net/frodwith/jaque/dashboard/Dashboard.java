@@ -171,7 +171,7 @@ public final class Dashboard {
     Optional<Registration> r = 
       Optional.ofNullable(cold.get(new StrongCellGrainKey(cell)));
 
-    return new Battery(this, r, knownUnknowns);
+    return new Battery(this, cell, r, knownUnknowns);
   }
 
   public Registration createCold(Cell battery) {

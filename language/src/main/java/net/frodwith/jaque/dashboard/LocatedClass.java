@@ -6,23 +6,27 @@ import java.util.function.Function;
 
 import com.oracle.truffle.api.Assumption;
 import com.oracle.truffle.api.CallTarget;
+import com.oracle.truffle.api.Truffle;
 
 import net.frodwith.jaque.AstContext;
-import net.frodwith.jaque.jet.Drivers;
 import net.frodwith.jaque.data.Axis;
 import net.frodwith.jaque.data.Cell;
 import net.frodwith.jaque.data.AxisMap;
-import net.frodwith.jaque.parser.FormulaParser;
 import net.frodwith.jaque.exception.ExitException;
+import net.frodwith.jaque.jet.Drivers;
+import net.frodwith.jaque.nodes.NockRootNode;
+import net.frodwith.jaque.parser.FormulaParser;
 
 public final class LocatedClass extends NockClass {
   public final Location location;
   private Optional<Drivers> drivers;
+  public AxisMap<CallTarget> targets;
 
   public LocatedClass(Battery battery, Assumption stable, Location location) {
     super(battery, stable);
     this.location = location;
     this.drivers = Optional.empty();
+    this.targets = AxisMap.EMPTY;
   }
 
   public boolean known(Cell core) {
@@ -67,8 +71,24 @@ public final class LocatedClass extends NockClass {
     getArm(Axis axis, AstContext context, GetArm g)
       throws ExitException {
     Optional<CallTarget> driver = getDrivers(context).getDriver(axis);
-    return driver.isPresent()
-      ? driver.get()
-      : rawArm(context, g);
+    if (driver.isPresent()) {
+      return driver.get();
+    }
+
+    CallTarget b = targets.get(axis);
+    if (b == null) {
+      Function<AstContext,FormulaParser.ParseResult> f =
+          FormulaParser.parse(battery.cell);
+      FormulaParser.ParseResult r = f.apply(context);
+
+      b = Truffle.getRuntime().createCallTarget(
+          new NockRootNode(r.context.language,
+                           r.sup,
+                           r.node));
+
+      targets = targets.insert(axis, b);
+    }
+
+    return b;
   }
 }
