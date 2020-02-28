@@ -3,6 +3,7 @@ package net.frodwith.jaque.dashboard;
 import java.util.function.Supplier;
 
 import com.oracle.truffle.api.nodes.ExplodeLoop;
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 
 import net.frodwith.jaque.data.Cell;
 import net.frodwith.jaque.runtime.NockContext;
@@ -27,7 +28,7 @@ public final class DynamicFine extends LocatedFine {
     return new DynamicFine(more, root);
   }
 
-  @ExplodeLoop
+  @TruffleBoundary
   @Override
   public boolean check(Cell core, Dashboard dashboard) {
     final Cell[] cores = new Cell[steps.length];

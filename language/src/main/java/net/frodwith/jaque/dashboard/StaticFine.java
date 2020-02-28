@@ -8,6 +8,8 @@ import net.frodwith.jaque.data.CellMeta;
 import net.frodwith.jaque.runtime.Equality;
 import net.frodwith.jaque.runtime.NockContext;
 
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+
 public final class StaticFine extends LocatedFine {
   private final Cell staticNoun;
   private final LocatedClass klass;
@@ -17,6 +19,7 @@ public final class StaticFine extends LocatedFine {
     this.klass = klass;
   }
 
+  @TruffleBoundary
   @Override
   public boolean check(Cell core, Dashboard dashboard) {
     CellMeta meta = core.getMeta();
