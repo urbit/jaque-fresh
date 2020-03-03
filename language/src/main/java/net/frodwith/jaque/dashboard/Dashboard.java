@@ -162,6 +162,12 @@ public final class Dashboard {
       : Optional.empty();
   }
 
+  public Map<StrongCellGrainKey,Registration> dumpColdRegistration() {
+    return cold;
+  }
+
+  // TODO: Step 2: Build a new Dashboard object from thawed `cold`.
+
   @TruffleBoundary
   public Battery createBattery(Cell cell) {
     Optional<Optional<Registration>> knownUnknowns = hashDiscovery

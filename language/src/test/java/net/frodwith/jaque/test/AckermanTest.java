@@ -79,6 +79,8 @@ import java.io.File;
 */
 
 public class AckermanTest {
+  private static final String TMP_BIN_FILENAME = "/tmp/jaqueTestSaveImage.bin";
+
   private static final String ACK_SOURCE_STRING = "[7 [7 [1 1.801.675.115] 8 [1 [7 [8 [1 0] [1 8 [1 0] 8 [1 8 [4 0 6] 6 [5 [0 2] 0 62] [0 14] 9 2 10 [6 0 2] 0 3] 9 2 0 1] 0 1] 11 [1.953.718.630 1 6.514.020 [0 7] 0] 0 1] 7 [8 [1 0 0] [1 6 [5 [1 0] 0 12] [4 0 13] 6 [5 [1 0] 0 13] [9 2 10 [6 [8 [9 4 0 7] 9 2 10 [6 0 28] 0 2] 1 1] 0 1] 9 2 10 [6 [8 [9 4 0 7] 9 2 10 [6 0 28] 0 2] 9 2 10 [13 8 [9 4 0 7] 9 2 10 [6 0 29] 0 2] 0 1] 0 1] 0 1] 11 [1.953.718.630 1 7.037.793 [0 7] 0] 0 1] 11 [1.953.718.630 1 1.801.675.115 [1 0] 0] 0 1] 9 5 0 1]";
   private static final Source ackSource = 
     Source.newBuilder("nock", ACK_SOURCE_STRING, "ackerman.nock").buildLiteral();
@@ -168,15 +170,20 @@ public class AckermanTest {
 
   @Test
   public void testSaveGate() {
+    // Fast hints on, hashboard off
     Context context = makeContext(true, false);
     Value gate = context.eval(ackSource).execute();
 
     try {
       context.getPolyglotBindings()
           .getMember("nock")
-          .invokeMember("saveImage", "/tmp/jaqueTestSaveImage.bin", gate);
+          .invokeMember("saveImage", TMP_BIN_FILENAME, gate);
+
+      // TODO: Make a new context fast hints off to ensure that we're loading correctly.
+      // TODO: Load the image
+      // TODO: Make sure it runs fast.
     } finally {
-      new File("/tmp/jaqueTestSaveImage.bin").delete();
+      new File(TMP_BIN_FILENAME).delete();
     }
   }
 }

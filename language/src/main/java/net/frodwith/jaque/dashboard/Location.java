@@ -12,7 +12,9 @@ import net.frodwith.jaque.data.FastClue;
 import net.frodwith.jaque.runtime.NockContext;
 import net.frodwith.jaque.exception.ExitException;
 
-public abstract class Location {
+import java.io.Serializable;
+
+public abstract class Location implements Serializable {
   public final String name;
   public final Map<String,Hook> hooks;
   protected static final TruffleLogger LOG =

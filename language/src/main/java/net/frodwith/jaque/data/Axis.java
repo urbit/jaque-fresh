@@ -11,7 +11,9 @@ import net.frodwith.jaque.runtime.Atom;
 import net.frodwith.jaque.runtime.HoonMath;
 import net.frodwith.jaque.runtime.Equality;
 
-public final class Axis implements Iterable<Boolean> {
+import java.io.Serializable;
+
+public final class Axis implements Iterable<Boolean>, Serializable {
   public final static Axis CRASH    = new Axis(0L);
   public final static Axis IDENTITY = new Axis(1L);
   public final static Axis HEAD     = new Axis(2L);

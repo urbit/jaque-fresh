@@ -177,7 +177,10 @@ public final class Bindings implements TruffleObject {
       return marshallsDebugDump.execute(debugDump, arguments);
     }
     else if ( member.equals("saveImage") ) {
-      return marshallsSaveImage.execute(saveImage, arguments);
+      // This is kinda hacky, but it looks like the easiest way to get the
+      // context into the specific, local, implementation class.
+      Object[] toPass = new Object[]{context, arguments};
+      return marshallsSaveImage.execute(saveImage, toPass);
     }
     else {
       throw UnknownIdentifierException.create(member);

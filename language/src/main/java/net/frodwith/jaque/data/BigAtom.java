@@ -25,7 +25,7 @@ public final class BigAtom implements TruffleObject, Serializable {
   public static final BigAtom MINIMUM = new BigAtom(new int[] {0, 0, 1});
 
   public int[] words;
-  private Object meta;
+  private transient Object meta;
 
   public BigAtom(int[] words) {
     // smaller atoms must be represented by longs

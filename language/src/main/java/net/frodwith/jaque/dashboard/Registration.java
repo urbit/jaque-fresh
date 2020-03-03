@@ -1,5 +1,7 @@
 package net.frodwith.jaque.dashboard;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
@@ -22,7 +24,7 @@ import net.frodwith.jaque.exception.ExitException;
 // Importantly, unregistered batteries do not have a Registration.
 // A separate class, Battery, is held in a weak cache, and even unregistered
 // batteries get one.
-public final class Registration {
+public final class Registration implements Serializable {
   private final Map<Object,Location> roots;
   private final ArrayList<Parents> parents;
 
@@ -31,7 +33,7 @@ public final class Registration {
     this.parents = new ArrayList<>();
   }
 
-  private static final class Parents {
+  private static final class Parents implements Serializable {
     public final Axis axis;
     public final Map<Location,Location> map;
 

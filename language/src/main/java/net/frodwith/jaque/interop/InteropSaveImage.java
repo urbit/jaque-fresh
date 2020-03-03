@@ -15,7 +15,9 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import net.frodwith.jaque.data.BigAtom;
 import net.frodwith.jaque.data.Cell;
 import net.frodwith.jaque.runtime.Murmug;
+import net.frodwith.jaque.runtime.NockContext;
 import net.frodwith.jaque.exception.ExitException;
+import net.frodwith.jaque.dashboard.Dashboard;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -25,12 +27,15 @@ import java.io.FileNotFoundException;
 @ExportLibrary(InteropLibrary.class)
 public final class InteropSaveImage implements TruffleObject {
   @TruffleBoundary
-  private static void saveImage(String filename, Object obj) throws IOException {
+  private static void saveImage(String filename, Dashboard dashboard, Object obj)
+      throws IOException {
     FileOutputStream fileOutputStream
       = new FileOutputStream(filename);
     ObjectOutputStream objectOutputStream
       = new ObjectOutputStream(fileOutputStream);
     objectOutputStream.writeObject(obj);
+    objectOutputStream.writeObject(dashboard.dumpColdRegistration());
+
     objectOutputStream.flush();
     objectOutputStream.close();
   }
@@ -48,8 +53,11 @@ public final class InteropSaveImage implements TruffleObject {
     }
     else {
       try {
-        saveImage((String)arguments[0], arguments[1]);
+        NockContext context = (NockContext)arguments[0];
+        Object[] origArguments = (Object[])arguments[1];
+        saveImage((String)origArguments[0], context.getDashboard(), origArguments[1]);
       } catch (IOException e) {
+        e.printStackTrace();
         throw UnsupportedMessageException.create();
       }
       return 1L;

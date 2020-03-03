@@ -1,4 +1,6 @@
 package net.frodwith.jaque.dashboard;
 
-public abstract class Hook {
+import java.io.Serializable;
+
+public abstract class Hook implements Serializable {
 }
