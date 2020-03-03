@@ -33,6 +33,8 @@ import net.frodwith.jaque.dashboard.BatteryHash;
 
 import net.frodwith.jaque.test.nodes.*;
 
+import java.io.File;
+
 /*
 ::  ["cc674e8bd17242c2978f95620a9aea7fa8f663b3857167f60ed620e5358c68ce"
 ::   "e62f14d11dd53a53887273494f6c12f653470adf9392ac35ab69781882abd38b"]
@@ -162,5 +164,19 @@ public class AckermanTest {
   @Test
   public void testOn() {
     doTest(makeContext(true, true), true);
+  }
+
+  @Test
+  public void testSaveGate() {
+    Context context = makeContext(true, false);
+    Value gate = context.eval(ackSource).execute();
+
+    try {
+      context.getPolyglotBindings()
+          .getMember("nock")
+          .invokeMember("saveImage", "/tmp/jaqueTestSaveImage.bin", gate);
+    } finally {
+      new File("/tmp/jaqueTestSaveImage.bin").delete();
+    }
   }
 }
