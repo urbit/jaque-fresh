@@ -13,6 +13,7 @@ import com.oracle.truffle.api.interop.UnknownIdentifierException;
 import net.frodwith.jaque.runtime.NockContext;
 import net.frodwith.jaque.dashboard.Dashboard;
 
+import net.frodwith.jaque.interop.InteropLoadImage;
 import net.frodwith.jaque.interop.InteropSaveImage;
 
 @ExportLibrary(InteropLibrary.class)
@@ -27,6 +28,7 @@ public final class Bindings implements TruffleObject {
   static final TruffleObject fromBytes = new InteropFromBytes();
   static final TruffleObject debugDump = new InteropDebugDump();
   static final TruffleObject saveImage = new InteropSaveImage();
+  static final TruffleObject loadImage = new InteropLoadImage();
 
   public Bindings(NockContext context) {
     this.context = context;
@@ -41,7 +43,7 @@ public final class Bindings implements TruffleObject {
   public Object getMembers(boolean includeInternal) {
     return new InteropArray("installArvoJets", "setDashboard", "fromBytes", "toBytes",
                             "toNoun", "jam", "cue", "mug", "mink", "debugDump",
-                            "saveImage");
+                            "saveImage", "loadImage");
   }
 
   @ExportMessage
@@ -56,7 +58,8 @@ public final class Bindings implements TruffleObject {
         || member.equals("mug")
         || member.equals("mink")
         || member.equals("debugDump")
-        || member.equals("saveImage");
+        || member.equals("saveImage")
+        || member.equals("loadImage");
   }
 
   @ExportMessage
@@ -69,7 +72,8 @@ public final class Bindings implements TruffleObject {
         || member.equals("mug")
         || member.equals("mink")
         || member.equals("debugDump")
-        || member.equals("saveImage");
+        || member.equals("saveImage")
+        || member.equals("loadImage");
   }
 
   @ExportMessage
@@ -103,6 +107,9 @@ public final class Bindings implements TruffleObject {
     else if ( member.equals("saveImage") ) {
       return saveImage;
     }
+    else if ( member.equals("loadImage") ) {
+      return loadImage;
+    }
     else if ( member.equals("setDashboard") ) {
       throw UnsupportedMessageException.create();
     }
@@ -123,7 +130,8 @@ public final class Bindings implements TruffleObject {
       @CachedLibrary("mug") InteropLibrary marshallsMug,
       @CachedLibrary("mink") InteropLibrary marshallsMink,
       @CachedLibrary("debugDump") InteropLibrary marshallsDebugDump,
-      @CachedLibrary("saveImage") InteropLibrary marshallsSaveImage)
+      @CachedLibrary("saveImage") InteropLibrary marshallsSaveImage,
+      @CachedLibrary("loadImage") InteropLibrary marshallsLoadImage)
     throws ArityException,
            UnsupportedTypeException,
            UnsupportedMessageException,
@@ -181,6 +189,12 @@ public final class Bindings implements TruffleObject {
       // context into the specific, local, implementation class.
       Object[] toPass = new Object[]{context, arguments};
       return marshallsSaveImage.execute(saveImage, toPass);
+    }
+    else if ( member.equals("loadImage") ) {
+      // This is kinda hacky, but it looks like the easiest way to get the
+      // context into the specific, local, implementation class.
+      Object[] toPass = new Object[]{context, arguments};
+      return marshallsLoadImage.execute(loadImage, toPass);
     }
     else {
       throw UnknownIdentifierException.create(member);

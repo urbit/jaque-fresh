@@ -171,13 +171,18 @@ public class AckermanTest {
   @Test
   public void testSaveGate() {
     // Fast hints on, hashboard off
-    Context context = makeContext(true, false);
-    Value gate = context.eval(ackSource).execute();
+    Context hintsOnContext = makeContext(true, false);
+    Value toSaveGate = hintsOnContext.eval(ackSource).execute();
 
     try {
-      context.getPolyglotBindings()
+      hintsOnContext.getPolyglotBindings()
           .getMember("nock")
-          .invokeMember("saveImage", TMP_BIN_FILENAME, gate);
+          .invokeMember("saveImage", TMP_BIN_FILENAME, toSaveGate);
+
+      Context hintsOffContext = makeContext(false, false);
+      Value loadedGate = hintsOffContext.getPolyglotBindings()
+          .getMember("nock")
+          .invokeMember("loadImage", TMP_BIN_FILENAME);
 
       // TODO: Make a new context fast hints off to ensure that we're loading correctly.
       // TODO: Load the image
