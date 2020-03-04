@@ -9,7 +9,7 @@ import java.io.Serializable;
 // by pointer equality of the wrapped cell.
 
 public final class StrongCellGrainKey implements Serializable {
-  private final Cell grain;
+  public final Cell grain;
   private final int hashCode;
 
   public StrongCellGrainKey(Cell grain) {

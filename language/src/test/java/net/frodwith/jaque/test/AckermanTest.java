@@ -178,15 +178,23 @@ public class AckermanTest {
       hintsOnContext.getPolyglotBindings()
           .getMember("nock")
           .invokeMember("saveImage", TMP_BIN_FILENAME, toSaveGate);
+      hintsOnContext.close();
 
+      // Fast hints off, just in case, to ensure we're reading registrations
+      // out of the image.
       Context hintsOffContext = makeContext(false, false);
       Value loadedGate = hintsOffContext.getPolyglotBindings()
           .getMember("nock")
           .invokeMember("loadImage", TMP_BIN_FILENAME);
 
-      // TODO: Make a new context fast hints off to ensure that we're loading correctly.
-      // TODO: Load the image
-      // TODO: Make sure it runs fast.
+      Value product = loadedGate.getMetaObject().invokeMember("2", 2L, 2L);
+      assertEquals(7L, product.as(Number.class));
+
+      // TODO: We're able to load and run the gate from the image file, but we
+      // don't appear to be reconstituting the cold registrations correctly?
+      //
+      // assertTrue(MockDecNode.called);
+      //
     } finally {
       new File(TMP_BIN_FILENAME).delete();
     }

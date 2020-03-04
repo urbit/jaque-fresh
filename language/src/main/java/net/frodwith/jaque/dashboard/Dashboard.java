@@ -166,7 +166,13 @@ public final class Dashboard {
     return cold;
   }
 
-  // TODO: Step 2: Build a new Dashboard object from thawed `cold`.
+  public void loadColdRegistrations(Map<StrongCellGrainKey,Registration> oldCold)
+      throws ExitException {
+    for (Map.Entry<StrongCellGrainKey,Registration> e : oldCold.entrySet()) {
+      Cell grain = silo.getCellGrain(e.getKey().grain);
+      cold.put(new StrongCellGrainKey(grain), e.getValue());
+    }
+  }
 
   @TruffleBoundary
   public Battery createBattery(Cell cell) {
