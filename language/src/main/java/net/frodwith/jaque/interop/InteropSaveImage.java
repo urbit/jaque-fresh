@@ -33,8 +33,8 @@ public final class InteropSaveImage implements TruffleObject {
       = new FileOutputStream(filename);
     ObjectOutputStream objectOutputStream
       = new ObjectOutputStream(fileOutputStream);
+    objectOutputStream.writeObject(dashboard.saveRegistrationRecord());
     objectOutputStream.writeObject(obj);
-    objectOutputStream.writeObject(dashboard.dumpColdRegistration());
 
     objectOutputStream.flush();
     objectOutputStream.close();

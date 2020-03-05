@@ -2,6 +2,8 @@ package net.frodwith.jaque.dashboard;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
@@ -54,6 +56,7 @@ public final class Dashboard {
   private final Map<StrongCellGrainKey,Registration> cold;
   private final Map<HashCode,Registration> hot;
   private final Map<Location,AxisMap<Function<AstContext,CallTarget>>> drivers;
+  private final ArrayList<RegistrationRecord> registrationRecords;
   private final static TruffleLogger LOG =
     TruffleLogger.getLogger(NockLanguage.ID, Dashboard.class);
 
@@ -69,6 +72,7 @@ public final class Dashboard {
     this.silo    = silo;
     this.hashDiscovery = hashDiscovery;
     this.fastHints = fastHints;
+    this.registrationRecords = new ArrayList<RegistrationRecord>();
   }
 
   public static class Builder {
@@ -131,7 +135,36 @@ public final class Dashboard {
       return this;
     }
   }
-  
+
+  // Sum type.
+  private static class RegistrationRecord implements Serializable {}
+
+  // A record of a root location
+  private static class RootRegistrationRecord extends RegistrationRecord {
+    public final Cell core;
+    public final RootLocation root;
+
+    public RootRegistrationRecord(Cell core, RootLocation root) {
+      this.core = core;
+      this.root = root;
+    }
+  }
+
+  private static class ChildRegistrationRecord extends RegistrationRecord {
+    public final Cell core;
+    public final Axis toParent;
+    public final Location child;
+    public final Location parent;
+
+    public ChildRegistrationRecord(Cell core, Axis toParent, Location child,
+                                   Location parent) {
+      this.core = core;
+      this.toParent = toParent;
+      this.child = child;
+      this.parent = parent;
+    }
+  }
+
   public AxisMap<CallTarget> getDrivers(Location location, AstContext context) {
     return drivers.containsKey(location)
       ? drivers.get(location).transform((f) -> f.apply(context))
@@ -162,16 +195,48 @@ public final class Dashboard {
       : Optional.empty();
   }
 
-  public Map<StrongCellGrainKey,Registration> dumpColdRegistration() {
-    return cold;
+  public Object saveRegistrationRecord() {
+    return registrationRecords;
   }
 
-  public void loadColdRegistrations(Map<StrongCellGrainKey,Registration> oldCold)
+  public void rerunRegistrationRecords(Object inOldRecords)
       throws ExitException {
-    for (Map.Entry<StrongCellGrainKey,Registration> e : oldCold.entrySet()) {
-      Cell grain = silo.getCellGrain(e.getKey().grain);
-      cold.put(new StrongCellGrainKey(grain), e.getValue());
+    if (!(inOldRecords instanceof ArrayList<?>)) {
+      throw new ExitException("invalid image: not registration records");
     }
+
+    ArrayList<RegistrationRecord> oldRecords =
+        (ArrayList<RegistrationRecord>)inOldRecords;
+
+    for (RegistrationRecord r : oldRecords) {
+      Cell core;
+      Location location;
+      System.err.println("Reviving record " + r);
+
+      if (r instanceof RootRegistrationRecord) {
+        RootRegistrationRecord rr = (RootRegistrationRecord)r;
+        getCold(rr.core).registerRoot(rr.core.tail, rr.root);
+        core = rr.core;
+        location = rr.root;
+      } else if (r instanceof ChildRegistrationRecord) {
+        ChildRegistrationRecord cr = (ChildRegistrationRecord)r;
+        getCold(cr.core).registerChild(cr.toParent, cr.child, cr.parent);
+        core = cr.core;
+        location = cr.child;
+      } else {
+        throw new ExitException("bad image");
+      }
+
+      Cell battery = canonicalizeBattery(core);
+      Battery b = battery.getMeta().getGrain().getBattery(this, battery);
+      core.getMeta()
+          .setNockClass(new LocatedClass(b, getStableAssumption(), location));
+
+      // Put the record into our own records so we can snapshot our state.
+      registrationRecords.add(r);
+    }
+
+    invalidate();
   }
 
   @TruffleBoundary
@@ -214,6 +279,7 @@ public final class Dashboard {
     if ( clue.toParent.isCrash() ) {
       RootLocation root = new RootLocation(clue.name, clue.hooks, core.tail);
       getCold(core).registerRoot(core.tail, root);
+      registrationRecords.add(new RootRegistrationRecord(core, root));
       location = root;
     }
     else {
@@ -237,6 +303,8 @@ public final class Dashboard {
             (StaticLocation) parent)
         : new DynamicChildLocation(clue.name, clue.hooks, parent, clue.toParent);
       getCold(core).registerChild(clue.toParent, child, parent);
+      registrationRecords.add(
+          new ChildRegistrationRecord(core, clue.toParent, child, parent));
       location = child;
     }
     location.audit(clue);

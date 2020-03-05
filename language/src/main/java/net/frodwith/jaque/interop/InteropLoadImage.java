@@ -37,14 +37,13 @@ public final class InteropLoadImage implements TruffleObject {
       = new FileInputStream(filename);
     ObjectInputStream objectInputStream
       = new ObjectInputStream(fileInputStream);
-    Object nounTree = objectInputStream.readObject();
-    Object coldRegistration = objectInputStream.readObject();
-
-    objectInputStream.close();
+    Object registrationRecords = objectInputStream.readObject();
 
     // Reconstitute the cold registrations.
-    context.getDashboard().loadColdRegistrations(
-        (Map<StrongCellGrainKey,Registration>)coldRegistration);
+    context.getDashboard().rerunRegistrationRecords(registrationRecords);
+
+    Object nounTree = objectInputStream.readObject();
+    objectInputStream.close();
 
     return nounTree;
   }
