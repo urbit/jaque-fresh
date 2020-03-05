@@ -141,24 +141,27 @@ public final class Dashboard {
 
   // A record of a root location
   private static class RootRegistrationRecord extends RegistrationRecord {
-    public final Cell core;
-    public final RootLocation root;
+    public final Cell batteryCell;
+    public final Object rootPayload;
+    public final RootLocation rootLocation;
 
-    public RootRegistrationRecord(Cell core, RootLocation root) {
-      this.core = core;
-      this.root = root;
+    public RootRegistrationRecord(Cell batteryCell, Object rootPayload,
+                                  RootLocation rootLocation) {
+      this.batteryCell = batteryCell;
+      this.rootPayload = rootPayload;
+      this.rootLocation = rootLocation;
     }
   }
 
   private static class ChildRegistrationRecord extends RegistrationRecord {
-    public final Cell core;
+    public final Cell batteryCell;
     public final Axis toParent;
     public final Location child;
     public final Location parent;
 
-    public ChildRegistrationRecord(Cell core, Axis toParent, Location child,
-                                   Location parent) {
-      this.core = core;
+    public ChildRegistrationRecord(Cell batteryCell, Axis toParent,
+                                   Location child, Location parent) {
+      this.batteryCell = batteryCell;
       this.toParent = toParent;
       this.child = child;
       this.parent = parent;
@@ -209,28 +212,25 @@ public final class Dashboard {
         (ArrayList<RegistrationRecord>)inOldRecords;
 
     for (RegistrationRecord r : oldRecords) {
-      Cell core;
-      Location location;
       System.err.println("Reviving record " + r);
 
       if (r instanceof RootRegistrationRecord) {
         RootRegistrationRecord rr = (RootRegistrationRecord)r;
-        getCold(rr.core).registerRoot(rr.core.tail, rr.root);
-        core = rr.core;
-        location = rr.root;
+        Cell canonical = silo.getCellGrain(rr.batteryCell);
+        canonical.getMeta().getGrain()
+            .getBattery(this, canonical)
+            .getCold(canonical)
+            .registerRoot(rr.rootPayload, rr.rootLocation);
       } else if (r instanceof ChildRegistrationRecord) {
         ChildRegistrationRecord cr = (ChildRegistrationRecord)r;
-        getCold(cr.core).registerChild(cr.toParent, cr.child, cr.parent);
-        core = cr.core;
-        location = cr.child;
+        Cell canonical = silo.getCellGrain(cr.batteryCell);
+        canonical.getMeta().getGrain()
+            .getBattery(this, canonical)
+            .getCold(canonical)
+            .registerChild(cr.toParent, cr.child, cr.parent);
       } else {
         throw new ExitException("bad image");
       }
-
-      Cell battery = canonicalizeBattery(core);
-      Battery b = battery.getMeta().getGrain().getBattery(this, battery);
-      core.getMeta()
-          .setNockClass(new LocatedClass(b, getStableAssumption(), location));
 
       // Put the record into our own records so we can snapshot our state.
       registrationRecords.add(r);
@@ -275,11 +275,14 @@ public final class Dashboard {
   public void
     register(Cell core, FastClue clue)
       throws ExitException {
+    Cell batteryCell = canonicalizeBattery(core);
     Location location;
     if ( clue.toParent.isCrash() ) {
       RootLocation root = new RootLocation(clue.name, clue.hooks, core.tail);
       getCold(core).registerRoot(core.tail, root);
-      registrationRecords.add(new RootRegistrationRecord(core, root));
+
+      registrationRecords.add(
+          new RootRegistrationRecord(batteryCell, core.tail, root));
       location = root;
     }
     else {
@@ -304,19 +307,13 @@ public final class Dashboard {
         : new DynamicChildLocation(clue.name, clue.hooks, parent, clue.toParent);
       getCold(core).registerChild(clue.toParent, child, parent);
       registrationRecords.add(
-          new ChildRegistrationRecord(core, clue.toParent, child, parent));
+          new ChildRegistrationRecord(batteryCell, clue.toParent, child, parent));
       location = child;
     }
     location.audit(clue);
     invalidate();
 
-    // if (clue.name.equals("fond")) {
-    //   //      new Exception().printStackTrace();
-    //   System.err.println("Clue name '" + clue.name + "' at " + location);
-    // }
-
-    Cell battery = canonicalizeBattery(core);
-    Battery b = battery.getMeta().getGrain().getBattery(this, battery);
+    Battery b = batteryCell.getMeta().getGrain().getBattery(this, batteryCell);
     core.getMeta()
       .setNockClass(new LocatedClass(b, getStableAssumption(), location));
   }
