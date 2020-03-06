@@ -187,14 +187,13 @@ public class AckermanTest {
           .getMember("nock")
           .invokeMember("loadImage", TMP_BIN_FILENAME);
 
+      // Assert that when we run the reloaded gate, we still invoke the correct
+      // jets.
       Value product = loadedGate.getMetaObject().invokeMember("2", 2L, 2L);
       assertEquals(7L, product.as(Number.class));
+      assertTrue(MockDecNode.called);
 
-      // TODO: We're able to load and run the gate from the image file, but we
-      // don't appear to be reconstituting the cold registrations correctly?
-      //
-      // assertTrue(MockDecNode.called);
-      //
+      hintsOffContext.close();
     } finally {
       new File(TMP_BIN_FILENAME).delete();
     }
