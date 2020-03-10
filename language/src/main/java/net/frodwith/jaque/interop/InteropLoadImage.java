@@ -7,7 +7,6 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.library.CachedLibrary;
 import com.oracle.truffle.api.library.ExportLibrary;
 import com.oracle.truffle.api.library.ExportMessage;
-import com.oracle.truffle.api.library.ExportMessage;
 import com.oracle.truffle.api.interop.InteropLibrary;
 import com.oracle.truffle.api.interop.ArityException;
 import com.oracle.truffle.api.interop.UnsupportedTypeException;
@@ -32,12 +31,13 @@ import java.io.FileNotFoundException;
 @ExportLibrary(InteropLibrary.class)
 public final class InteropLoadImage implements TruffleObject {
   @TruffleBoundary
-  private static Object loadImage(String filename, NockContext context)
+  private Object loadImage(String filename, NockContext context)
       throws IOException, ClassNotFoundException, ExitException {
     FileInputStream fileInputStream
       = new FileInputStream(filename);
     ObjectInputStream objectInputStream
       = new ObjectInputStream(fileInputStream);
+    Object eventNum = objectInputStream.readObject();
     Object registrationRecords = objectInputStream.readObject();
 
     // Reconstitute the cold registrations.
@@ -46,7 +46,7 @@ public final class InteropLoadImage implements TruffleObject {
     Object nounTree = objectInputStream.readObject();
     objectInputStream.close();
 
-    return HoonSerial.cue(nounTree);
+    return new EventNumObjectPair((Long)eventNum, HoonSerial.cue(nounTree));
   }
 
   @ExportMessage
@@ -68,6 +68,46 @@ public final class InteropLoadImage implements TruffleObject {
       } catch (ExitException | ClassNotFoundException | IOException e) {
         e.printStackTrace();
         throw UnsupportedMessageException.create();
+      }
+    }
+  }
+
+  /**
+   * Needed to pass a tuple back.
+   */
+  @ExportLibrary(InteropLibrary.class)
+  class EventNumObjectPair implements TruffleObject {
+    private final Long eventNum;
+    private final Object image;
+
+    EventNumObjectPair(Long eventNum, Object image) {
+      this.eventNum = eventNum;
+      this.image = image;
+    }
+
+    @ExportMessage
+    public boolean hasArrayElements() {
+      return true;
+    }
+
+    @ExportMessage
+    public long getArraySize() {
+      return 2;
+    }
+
+    @ExportMessage
+    public boolean isArrayElementReadable(long index) {
+      return index < 2;
+    }
+
+    @ExportMessage
+    public Object readArrayElement(long index) throws InvalidArrayIndexException {
+      if (index == 0) {
+        return eventNum;
+      } else if (index == 1) {
+        return image;
+      } else {
+        throw InvalidArrayIndexException.create(index);
       }
     }
   }

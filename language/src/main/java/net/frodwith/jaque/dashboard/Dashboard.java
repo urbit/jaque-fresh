@@ -212,8 +212,6 @@ public final class Dashboard {
         (ArrayList<RegistrationRecord>)inOldRecords;
 
     for (RegistrationRecord r : oldRecords) {
-      System.err.println("Reviving record " + r);
-
       if (r instanceof RootRegistrationRecord) {
         RootRegistrationRecord rr = (RootRegistrationRecord)r;
         Cell canonical = silo.getCellGrain(rr.batteryCell);

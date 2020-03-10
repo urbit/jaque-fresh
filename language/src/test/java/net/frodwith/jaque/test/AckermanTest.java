@@ -181,15 +181,20 @@ public class AckermanTest {
 
       hintsOnContext.getPolyglotBindings()
           .getMember("nock")
-          .invokeMember("saveImage", TMP_BIN_FILENAME, toSaveGate);
+          .invokeMember("saveImage", TMP_BIN_FILENAME, 37L, toSaveGate);
       hintsOnContext.close();
 
       // Fast hints off, just in case, to ensure we're reading registrations
       // out of the image.
       Context hintsOffContext = makeContext(false, false);
-      Value loadedGate = hintsOffContext.getPolyglotBindings()
+      Value loadedImage = hintsOffContext.getPolyglotBindings()
           .getMember("nock")
           .invokeMember("loadImage", TMP_BIN_FILENAME);
+
+      // Ensure the event number gets restored correctly.
+      long loadedEventNum = loadedImage.getArrayElement(0).asLong();
+      Value loadedGate = loadedImage.getArrayElement(1);
+      assertEquals(37L, loadedEventNum);
 
       // Assert that when we run the reloaded gate, we still invoke the correct
       // jets.

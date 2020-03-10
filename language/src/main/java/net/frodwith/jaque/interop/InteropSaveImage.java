@@ -28,12 +28,13 @@ import java.io.FileNotFoundException;
 @ExportLibrary(InteropLibrary.class)
 public final class InteropSaveImage implements TruffleObject {
   @TruffleBoundary
-  private static void saveImage(String filename, Dashboard dashboard, Object obj)
+  private static void saveImage(String filename, Dashboard dashboard, Long eventNum, Object obj)
       throws IOException {
     FileOutputStream fileOutputStream
       = new FileOutputStream(filename);
     ObjectOutputStream objectOutputStream
       = new ObjectOutputStream(fileOutputStream);
+    objectOutputStream.writeObject(eventNum);
     objectOutputStream.writeObject(dashboard.saveRegistrationRecord());
     objectOutputStream.writeObject(HoonSerial.jam(obj));
 
@@ -56,7 +57,8 @@ public final class InteropSaveImage implements TruffleObject {
       try {
         NockContext context = (NockContext)arguments[0];
         Object[] origArguments = (Object[])arguments[1];
-        saveImage((String)origArguments[0], context.getDashboard(), origArguments[1]);
+        saveImage((String)origArguments[0], context.getDashboard(), (Long)origArguments[1],
+                  origArguments[2]);
       } catch (IOException e) {
         e.printStackTrace();
         throw UnsupportedMessageException.create();

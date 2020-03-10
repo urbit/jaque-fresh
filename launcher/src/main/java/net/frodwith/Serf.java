@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.ArrayIndexOutOfBoundsException;
@@ -78,6 +79,8 @@ public class Serf implements Thread.UncaughtExceptionHandler
   private final static Source callPokeSource =
       Source.newBuilder("nock", CALL_POKE_SOURCE_STRING, "call-poke.nock")
       .buildLiteral();
+
+  private final static String IMG_LOCATION = "/.urb/chk/jaque.img";
 
   private final Context truffleContext;
   private final Value nockRuntime;
@@ -154,8 +157,8 @@ public class Serf implements Thread.UncaughtExceptionHandler
   }
 
   public void run(String pierDir) throws IOException {
-    // TODO: load the pier directory and do the equivalent of u3m_boot().
-    //
+    ensurePierCheckpointDirectoryExist(pierDir + "/.urb/chk/");
+    attemptToReloadImage(pierDir);
     sendBoot();
 
     // Read until EOF
@@ -177,7 +180,7 @@ public class Serf implements Thread.UncaughtExceptionHandler
           onExitMessage(message);
         } else if (tag == C3__SAVE) {
           //System.err.println("poke save");
-          // TODO: I have no idea at all.
+          onSaveMessage(pierDir, message);
         } else {
           // TODO: long -> String
           throw new NounShapeException("Invalid request tag: " + tag);
@@ -284,6 +287,21 @@ public class Serf implements Thread.UncaughtExceptionHandler
     }
   }
 
+  private void onSaveMessage(String pierDir, Value message)
+      throws NounShapeException
+  {
+    // TODO: Saving an image is much slower in jaque than it is in vere; we
+    // probably want vere to block until there's confirmation that the image
+    // has completed writing.
+    System.err.println("Beginning image save for event " +
+                       this.lastEventProcessed + " with mug " + this.currentMug +
+                       "...");
+    nockRuntime.invokeMember("saveImage", pierDir + IMG_LOCATION,
+                             this.lastEventProcessed,
+                             this.kernelCore);
+    System.err.println("Completed image save...");
+  }
+
   private void doWorkBoot(long eventNum, Value job)
       throws NounShapeException, IOException
   {
@@ -380,16 +398,20 @@ public class Serf implements Thread.UncaughtExceptionHandler
   /**
    * Sends the initial [%play ~] atom to the king to specify that we're ready
    * for pleas.
-   *
-   * TODO: This hard codes sending `[%play ~]` instead of sending the state
-   * after we've loaded a snapshot. We don't have snapshots yet.
    */
   private void sendBoot() throws IOException {
-    writeNoun(nockRuntime.invokeMember("toNoun", C3__PLAY, 1L, 0L));
+    // We return the next event we want to see.
+    long nex = 1L;
+    if (0 != lastEventProcessed) {
+      nex += lastEventProcessed;
+    }
+
+    writeNoun(nockRuntime.invokeMember("toNoun", C3__PLAY, nex, this.currentMug));
   }
 
   private void sendDone(long event, long mug, Value effects) throws IOException {
-    logHandler.publish(new LogRecord(Level.FINE, "Sending DONE(" + event + ", " + mug + ", " + effects + ")"));
+    logHandler.publish(new LogRecord(Level.FINE, "Sending DONE(" + event + ", " +
+                                     mug + ", " + effects + ")"));
     writeNoun(nockRuntime.invokeMember("toNoun", C3__DONE, event, mug, effects));
   }
 
@@ -437,5 +459,24 @@ public class Serf implements Thread.UncaughtExceptionHandler
     // We mustn't write to stdout ever.
     e.printStackTrace(System.err);
     System.exit(-1);
+  }
+
+  private void ensurePierCheckpointDirectoryExist(String pierDir) {
+    File directory = new File(pierDir);
+    if (!directory.exists()) {
+      directory.mkdirs();
+    }
+  }
+
+  private void attemptToReloadImage(String pierDir) {
+    String imgPath = pierDir + "/.urb/chk/jaque.img";
+    File snapshot = new File(imgPath);
+    if (snapshot.exists()) {
+      Value tuple = nockRuntime.invokeMember("loadImage", imgPath);
+      this.lastEventProcessed = tuple.getArrayElement(0).asLong();
+      this.kernelCore = tuple.getArrayElement(1);
+      this.currentMug =
+          nockRuntime.invokeMember("mug", this.kernelCore).asLong();
+    }
   }
 }
