@@ -175,6 +175,10 @@ public class AckermanTest {
     Value toSaveGate = hintsOnContext.eval(ackSource).execute();
 
     try {
+      // TODO: Running the gate causes the registration of +dec to occur. Think
+      // about this in later cases.
+      toSaveGate.getMetaObject().invokeMember("2", 2L, 2L);
+
       hintsOnContext.getPolyglotBindings()
           .getMember("nock")
           .invokeMember("saveImage", TMP_BIN_FILENAME, toSaveGate);
