@@ -319,7 +319,7 @@ public final class HoonMath {
   public static Object mod(int[] x, int[] y) {
     int cmp = Atom.compareWords(x, y);
     if ( cmp < 0 ) {
-      return new BigAtom(y);
+      return new BigAtom(x);
     }
     else if ( 0 == cmp ) {
       return 0L;
