@@ -67,7 +67,6 @@ public class MathTest {
             simple("7.237.005.577.332.262.213.973.186.563.042.994.240.857.116.359.379.907.606.001.950.938.285.454.250.989")));
   }
 
-  @Ignore
   @Test
   public void bigModExamples2() throws ExitException {
     assertNounEquals(

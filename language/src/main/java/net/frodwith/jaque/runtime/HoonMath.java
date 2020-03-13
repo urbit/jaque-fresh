@@ -251,7 +251,7 @@ public final class HoonMath {
         ylen = y.length,
         rlen, qlen;
     int[] xwords = Arrays.copyOf(x, xlen+2),
-          ywords = Arrays.copyOf(y, ylen);
+          ywords = Arrays.copyOf(y, ylen+1);
 
     int nshift = MPN.count_leading_zeros(ywords[ylen-1]);
     if (nshift != 0) {
