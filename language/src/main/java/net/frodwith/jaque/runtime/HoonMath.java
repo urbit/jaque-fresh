@@ -250,8 +250,10 @@ public final class HoonMath {
     int xlen = x.length,
         ylen = y.length,
         rlen, qlen;
-    int[] xwords = Arrays.copyOf(x, xlen+2),
-          ywords = Arrays.copyOf(y, ylen+1);
+    int[] xwords = Arrays.copyOf(x, xlen+2);
+    // TODO: This is a divergence from kawa, but it fixes MathTest
+    // #bigModExamples2. Investigate further when time allows.
+    int[] ywords = Arrays.copyOf(y, ylen+1);
 
     int nshift = MPN.count_leading_zeros(ywords[ylen-1]);
     if (nshift != 0) {
