@@ -429,16 +429,23 @@ public final class Atom {
 
   // note: you can decrement a word array under BigAtom.MINIMUM with this.
   public static int[] decrementInPlace(int[] vol) {
-    for ( int i = 0; i < vol.length; i++ ) {
-      if ( 0 == vol[i] ) {
-        int[] smaller = new int[vol.length - 1];
-        Arrays.fill(smaller, 0xFFFFFFFF);
-        return smaller;
+    boolean carry;
+    int i = 0;
+
+    do {
+      carry = (0 == vol[i]);
+      vol[i] -= 1;
+
+      if ( (1 + i) == vol.length ) {
+        if ( 0 == vol[i] ) {
+          vol = Arrays.copyOfRange(vol, 0, i);
+        }
+        break;
       }
-      else {
-        vol[i] -= 1;
-      }
-    }
+
+      i++;
+    } while ( carry );
+
     return vol;
   }
 
