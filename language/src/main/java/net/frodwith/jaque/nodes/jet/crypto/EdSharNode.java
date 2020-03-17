@@ -22,8 +22,6 @@ import net.frodwith.jaque.Ed25519Exception;
 public abstract class EdSharNode extends SubjectNode {
   @Specialization
   protected Object shar(Object pub, Object seedObj) {
-    System.err.println("shar:ed:crypto");
-
     try {
       byte[] seed = Atom.forceBytes(seedObj, 32);
       byte[] otherPublicKey = Atom.forceBytes(pub, 32);

@@ -23,8 +23,6 @@ import net.frodwith.jaque.Ed25519Exception;
 public abstract class EdVeriNode extends SubjectNode {
   @Specialization
   protected long veri(Object s, Object m, Object pk) {
-    System.err.println("veri:ed:crypto");
-
     try {
       byte[] signature = Atom.forceBytes(s, 64);
       byte[] message = Atom.toByteArray(m);

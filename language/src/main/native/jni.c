@@ -285,8 +285,6 @@ JNIEXPORT void JNICALL Java_net_frodwith_jaque_Ed25519_scalarmult(
     jbyteArray jAScalar,
     jbyteArray jAPoint)
 {
-  fprintf(stderr, "\r+scalarmult:ed:crypto\r\n");
-
   unsigned char a_y[32];
   unsigned char b_y[32];
 
@@ -337,8 +335,6 @@ JNIEXPORT void JNICALL Java_net_frodwith_jaque_Ed25519_scalarmult_1base(
     jbyteArray jOutput,
     jbyteArray jScalar)
 {
-  fprintf(stderr, "\r+scalarmult-base:ed:crypto\r\n");
-
   unsigned char scalar_y[32];
   if (!byteArrayToCharArray(env, jScalar, 32, scalar_y)) {
     throwException(env, "a-scalar size not equal to 32");
@@ -374,8 +370,6 @@ JNIEXPORT void JNICALL Java_net_frodwith_jaque_Ed25519_add_1scalarmult_1scalarmu
     jbyteArray jAPoint,
     jbyteArray jBScalar)
 {
-  fprintf(stderr, "\r+add-scalarmult-scalarmult-base:ed:crypto\r\n");
-
   unsigned char a_y[32];
   unsigned char a_point_y[32];
   unsigned char b_y[32];
@@ -436,8 +430,6 @@ JNIEXPORT void JNICALL Java_net_frodwith_jaque_Ed25519_add_1double_1scalarmult(
     jbyteArray jBScalar,
     jbyteArray jBPoint)
 {
-  fprintf(stderr, "\r+add-double-scalarmult:ed:crypto\r\n");
-
   unsigned char a_y[32];
   unsigned char a_point_y[32];
   unsigned char b_y[32];

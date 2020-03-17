@@ -26,8 +26,6 @@ public abstract class EdAddDoubleScalarmultNode extends SubjectNode {
   protected Object addDoubleScalarmult(
       Object aObj, Object bObj, Object cObj, Object dObj)
   {
-    System.err.println("+add-double-scalarmult:ed:crypto");
-
     try {
       byte[] a = Atom.forceBytes(aObj, 32);
       byte[] b = Atom.forceBytes(bObj, 32);

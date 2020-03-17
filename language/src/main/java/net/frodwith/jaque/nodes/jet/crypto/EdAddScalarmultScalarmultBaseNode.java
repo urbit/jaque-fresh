@@ -25,8 +25,6 @@ public abstract class EdAddScalarmultScalarmultBaseNode extends SubjectNode {
   protected Object addScalarmultScalarmultBase(
       Object aObj, Object bObj, Object cObj)
   {
-    System.err.println("+add-scalarmult-scalarmult-base:ed:crypto");
-
     try {
       byte[] a = Atom.forceBytes(aObj, 32);
       byte[] b = Atom.forceBytes(bObj, 32);

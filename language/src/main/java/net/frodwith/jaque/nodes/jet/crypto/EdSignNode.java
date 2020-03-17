@@ -22,8 +22,6 @@ import net.frodwith.jaque.Ed25519Exception;
 public abstract class EdSignNode extends SubjectNode {
   @Specialization
   protected Object sign(Object msg, Object seedObj) {
-    System.err.println("sign:ed:crypto");
-
     try {
       byte[] seed = Atom.forceBytes(seedObj, 32);
       byte[] message = Atom.toByteArray(msg);

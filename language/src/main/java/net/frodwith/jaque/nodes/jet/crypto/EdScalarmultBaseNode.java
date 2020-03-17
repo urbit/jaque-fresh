@@ -21,8 +21,6 @@ import net.frodwith.jaque.Ed25519Exception;
 public abstract class EdScalarmultBaseNode extends SubjectNode {
   @Specialization
   protected Object scalarmult(Object aObj) {
-    System.err.println("+scalarmult-base:ed:crypto");
-
     try {
       byte[] a = Atom.forceBytes(aObj, 32);
       byte[] output = new byte[32];

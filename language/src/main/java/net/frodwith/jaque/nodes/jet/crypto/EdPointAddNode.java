@@ -22,8 +22,6 @@ import net.frodwith.jaque.Ed25519Exception;
 public abstract class EdPointAddNode extends SubjectNode {
   @Specialization
   protected Object pointAdd(Object aObj, Object bObj) {
-    System.err.println("+pointAdd:ed:crypto");
-
     try {
       byte[] a = Atom.forceBytes(aObj, 32);
       byte[] b = Atom.forceBytes(bObj, 32);
