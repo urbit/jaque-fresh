@@ -16,7 +16,6 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 
 import net.frodwith.jaque.data.BigAtom;
 import net.frodwith.jaque.data.Cell;
-import net.frodwith.jaque.runtime.HoonSerial;
 import net.frodwith.jaque.runtime.Murmug;
 import net.frodwith.jaque.runtime.NockContext;
 import net.frodwith.jaque.exception.ExitException;
@@ -46,7 +45,7 @@ public final class InteropLoadImage implements TruffleObject {
     Object nounTree = objectInputStream.readObject();
     objectInputStream.close();
 
-    return new EventNumObjectPair((Long)eventNum, HoonSerial.cue(nounTree));
+    return new EventNumObjectPair((Long)eventNum, nounTree);
   }
 
   @ExportMessage

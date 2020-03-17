@@ -14,7 +14,6 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 
 import net.frodwith.jaque.data.BigAtom;
 import net.frodwith.jaque.data.Cell;
-import net.frodwith.jaque.runtime.HoonSerial;
 import net.frodwith.jaque.runtime.Murmug;
 import net.frodwith.jaque.runtime.NockContext;
 import net.frodwith.jaque.exception.ExitException;
@@ -36,7 +35,7 @@ public final class InteropSaveImage implements TruffleObject {
       = new ObjectOutputStream(fileOutputStream);
     objectOutputStream.writeObject(eventNum);
     objectOutputStream.writeObject(dashboard.saveRegistrationRecord());
-    objectOutputStream.writeObject(HoonSerial.jam(obj));
+    objectOutputStream.writeObject(obj);
 
     objectOutputStream.flush();
     objectOutputStream.close();
