@@ -30,8 +30,6 @@ public abstract class AesEcbNode extends SubjectNode {
   @Specialization
   protected Object aesEcb(Object key, Object block)
   {
-    System.err.println("aesEcb");
-
     try {
       return AtomAes.aes_ecb(getMode(), getKeySize(), key, block);
     } catch (ExitException e) {

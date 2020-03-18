@@ -31,8 +31,6 @@ public abstract class AesCbcNode extends SubjectNode {
   @Specialization
   protected Object aesCbc(Object key, Object iv, Object msg)
   {
-    System.err.println("aesCbc");
-
     try {
       return AtomAes.aes_cbc(getMode(), getKeySize(), key, iv, msg);
     } catch (ExitException e) {

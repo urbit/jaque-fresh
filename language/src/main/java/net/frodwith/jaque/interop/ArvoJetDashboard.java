@@ -134,14 +134,14 @@ public class ArvoJetDashboard {
                          new JetHook[0],
                          new ChildCore[] {
                            gate("en", (c, cx) -> AesCbcNodeGen.create(
-                               new SlotExpressionNode(Axis.get(61L)),
                                new SlotExpressionNode(Axis.get(60L)),
+                               new SlotExpressionNode(Axis.get(61L)),
                                new SlotExpressionNode(Axis.SAMPLE),
                                Cipher.ENCRYPT_MODE,
                                keysize)),
                            gate("de", (c, cx) -> AesCbcNodeGen.create(
-                               new SlotExpressionNode(Axis.get(61L)),
                                new SlotExpressionNode(Axis.get(60L)),
+                               new SlotExpressionNode(Axis.get(61L)),
                                new SlotExpressionNode(Axis.SAMPLE),
                                Cipher.DECRYPT_MODE,
                                keysize)),
