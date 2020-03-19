@@ -42,7 +42,6 @@ public class List implements Iterable<Object> {
   public static Object lent(Object ram) {
     Iterator<Object> i = new List(ram).iterator();
     Atom.CountUp c = new Atom.CountUp();
-    Object r = 0L;
 
     while ( i.hasNext() ) {
       c.next();

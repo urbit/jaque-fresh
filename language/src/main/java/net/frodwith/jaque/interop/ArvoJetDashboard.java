@@ -39,6 +39,7 @@ import net.frodwith.jaque.nodes.jet.GorNodeGen;
 import net.frodwith.jaque.nodes.jet.EndNodeGen;
 import net.frodwith.jaque.nodes.jet.FlopNodeGen;
 import net.frodwith.jaque.nodes.jet.JamNodeGen;
+import net.frodwith.jaque.nodes.jet.LentNodeGen;
 import net.frodwith.jaque.nodes.jet.LossNodeGen;
 import net.frodwith.jaque.nodes.jet.LoreNodeGen;
 import net.frodwith.jaque.nodes.jet.LshNodeGen;
@@ -559,6 +560,8 @@ public class ArvoJetDashboard {
 
                       gate("flop", (c, ax) ->
                            FlopNodeGen.create(new SlotExpressionNode(Axis.SAMPLE))),
+                      gate("lent", (c, ax) ->
+                           LentNodeGen.create(new SlotExpressionNode(Axis.SAMPLE))),
                       gate("reap", (c, ax) ->
                            ReapNodeGen.create(new SlotExpressionNode(Axis.SAM_2),
                                               new SlotExpressionNode(Axis.SAM_3))),
