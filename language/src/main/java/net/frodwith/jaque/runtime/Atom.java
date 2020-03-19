@@ -375,6 +375,7 @@ public final class Atom {
       return buf;
     }
     for (i = 0, b = 0;;) {
+      if (i >= wor.length) break;
       w = wor[i++];
 
       buf[b++] = (byte) ((w & 0x000000FF) >>> 0);
