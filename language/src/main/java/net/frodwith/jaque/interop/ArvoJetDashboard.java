@@ -53,6 +53,7 @@ import net.frodwith.jaque.nodes.jet.MugNodeGen;
 import net.frodwith.jaque.nodes.jet.MulNodeGen;
 import net.frodwith.jaque.nodes.jet.PegNodeGen;
 import net.frodwith.jaque.nodes.jet.RapNodeGen;
+import net.frodwith.jaque.nodes.jet.ReapNodeGen;
 import net.frodwith.jaque.nodes.jet.RepNodeGen;
 import net.frodwith.jaque.nodes.jet.RipNodeGen;
 import net.frodwith.jaque.nodes.jet.RshNodeGen;
@@ -399,7 +400,7 @@ public class ArvoJetDashboard {
                     new JetArm[0],
                     new JetHook[0],
                     new ChildCore[] {
-                      gate("ripemd-160", (c, ax) ->
+                      gate("ripemd160", (c, ax) ->
                            Ripemd160NodeGen.create(
                                new SlotExpressionNode(Axis.SAM_2),
                                new SlotExpressionNode(Axis.SAM_3))),
@@ -554,6 +555,10 @@ public class ArvoJetDashboard {
                                              new SlotExpressionNode(Axis.SAM_3))),
 
                       // ???????
+
+                      gate("reap", (c, ax) ->
+                           ReapNodeGen.create(new SlotExpressionNode(Axis.SAM_2),
+                                              new SlotExpressionNode(Axis.SAM_3))),
 
                       gate("jam", (c, ax) ->
                            JamNodeGen.create(new SlotExpressionNode(Axis.SAMPLE))),
