@@ -126,6 +126,16 @@ public class MathTest {
                                       16L));
   }
 
+  @Test
+  public void dor() throws ExitException {
+    assertNounEquals(Atom.YES, HoonMath.dor(6L, 6L));
+  }
+
+  @Test
+  public void mor() throws ExitException {
+    assertNounEquals(Atom.YES, HoonMath.mor(6L, 6L));
+  }
+
   // subtraction reverses addition
   @Property
   public void addSub(@From(AtomGenerator.class) Object a,

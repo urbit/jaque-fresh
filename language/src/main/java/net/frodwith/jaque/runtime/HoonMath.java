@@ -613,6 +613,9 @@ public final class HoonMath {
 
   @TruffleBoundary
   public static long dor(Object a, Object b) throws ExitException {
+    if (Equality.equals(a, b)) {
+      return Atom.YES;
+    }
     if ( Atom.isAtom(a) ) {
       if ( Atom.isAtom(b) ) {
         return (Atom.compare(a, b) == -1) ? Atom.YES : Atom.NO;

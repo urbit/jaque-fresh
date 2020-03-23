@@ -19,7 +19,6 @@ public abstract class DorNode extends SubjectNode {
   @Specialization
   protected Object dor(Object a, Object b) {
     try {
-      System.err.println("dor");
       return HoonMath.dor(a, b);
     }
     catch ( ExitException e ) {
