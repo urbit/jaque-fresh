@@ -427,11 +427,12 @@ public class ArvoJetDashboard {
                       coedCore,
                       aesCore,
 
-                      // hmac
+                      // hmac  (this seems to be not worth jetting?)
                       // argon
                       blakeCore,
                       ripemdCore,
-                      // secp
+                      // secp (appears to only be used in the app which signs
+                      //       ethereum transactions; can punt for now.)
                     });
 
   private static final ChildCore jetLayerFive =
