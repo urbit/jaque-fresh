@@ -70,6 +70,7 @@ import net.frodwith.jaque.nodes.jet.ut.NounsKeyNode;
 import net.frodwith.jaque.nodes.jet.ut.NestSaveNode;
 import net.frodwith.jaque.nodes.jet.ut.UnconditionalSaveNode;
 
+import net.frodwith.jaque.nodes.jet.crypto.Argon2NodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdPuckNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdSharNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdSignNodeGen;
@@ -379,6 +380,41 @@ public class ArvoJetDashboard {
                       aesCbcCore("cbcc", 32),
                     });
 
+
+  // the hoon code for argon2 takes configuration parameters,
+  // and then produces a gate. we jet that inner gate.
+  // this does mean that the config params have gotten buried
+  // pretty deep in the subject, hence the +510.
+  private static final Axis argon510 = Axis.get(510L);
+
+  private static final ChildCore argonCore =
+      new ChildCore(
+          "argon",
+          Axis.get(31L),
+          new HashCode[0],
+          new JetArm[0],
+          new JetHook[0],
+          new ChildCore[] {
+            offsetGate("argon2", Axis.get(511L), (c, ax) ->
+                       Argon2NodeGen.create(
+                           // parameters on the very outer gate.
+                           new SlotExpressionNode(argon510.head()),           // out
+                           new SlotExpressionNode(argon510.peg(6L)),          // type
+                           new SlotExpressionNode(argon510.peg(14L)),         // version
+                           new SlotExpressionNode(argon510.peg(30L)),         // threads
+                           new SlotExpressionNode(argon510.peg(62L)),         // memCost
+                           new SlotExpressionNode(argon510.peg(126L)),        // timeCost
+                           new SlotExpressionNode(argon510.peg(254L).head()), // keyLen
+                           new SlotExpressionNode(argon510.peg(254L).tail()), // keyData
+                           new SlotExpressionNode(argon510.peg(255L).head()), // extraLen
+                           new SlotExpressionNode(argon510.peg(255L).tail()), // extraData
+                           // inner gate
+                           new SlotExpressionNode(Axis.SAM_2.head()),         // msgLen
+                           new SlotExpressionNode(Axis.SAM_2.tail()),         // msgData
+                           new SlotExpressionNode(Axis.SAM_3.head()),         // saltLen
+                           new SlotExpressionNode(Axis.SAM_3.tail())))        // saltData
+          });
+
   private static final ChildCore blakeCore =
       new ChildCore("blake",
                     Axis.get(31L),
@@ -428,7 +464,7 @@ public class ArvoJetDashboard {
                       aesCore,
 
                       // hmac  (this seems to be not worth jetting?)
-                      // argon
+                      argonCore,
                       blakeCore,
                       ripemdCore,
                       // secp (appears to only be used in the app which signs

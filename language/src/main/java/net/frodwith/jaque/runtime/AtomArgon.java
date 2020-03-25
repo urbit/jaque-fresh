@@ -61,7 +61,7 @@ public final class AtomArgon {
                               .withSecret(key)
                               .withAdditional(extra)
                               .withIterations(Atom.requireInt(timeCost))
-                              .withMemoryAsKB(Atom.requireInt(memCost)) // or power of two?
+                              .withMemoryAsKB(Atom.requireInt(memCost))
                               .withParallelism(Atom.requireInt(threads))
                               .withVersion(Atom.requireInt(version))
                               .build();
@@ -72,6 +72,6 @@ public final class AtomArgon {
     byte[] outputBytes = new byte[Atom.requireInt(outputSize)];
     generator.generateBytes(msg, outputBytes);
 
-    return new Cell(3L, new Cell(outputSize, Atom.fromByteArray(outputBytes, Atom.BIG_ENDIAN)));
+    return Atom.fromByteArray(outputBytes, Atom.BIG_ENDIAN);
   }
 }

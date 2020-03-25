@@ -103,6 +103,14 @@ public final class Axis implements Iterable<Boolean>, Serializable {
     return new Axis(HoonMath.peg(this.atom, under.atom));
   }
 
+  public Axis head() {
+    return new Axis(HoonMath.peg(this.atom, 2L));
+  }
+
+  public Axis tail() {
+    return new Axis(HoonMath.peg(this.atom, 3L));
+  }
+
   public boolean isIdentity() {
     return (long) atom == 1L;
   }
