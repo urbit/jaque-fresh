@@ -8,7 +8,7 @@ import com.oracle.truffle.api.dsl.Fallback;
 import net.frodwith.jaque.nodes.expression.SlotExpressionNode;
 import net.frodwith.jaque.nodes.SubjectNode;
 import net.frodwith.jaque.runtime.Atom;
-import net.frodwith.jaque.runtime.AtomArgon;
+import net.frodwith.jaque.runtime.AtomCrypto;
 import net.frodwith.jaque.exception.ExitException;
 import net.frodwith.jaque.exception.NockException;
 
@@ -47,9 +47,8 @@ public abstract class Argon2Node extends SubjectNode {
                           Object saltLen,
                           Object saltObj) {
     try {
-      System.err.println("argon2");
-      return AtomArgon.argon2(outputSize, type, version, threads, memCost, timeCost, keyLen,
-                              keyObj, extraLen, extraObj, msgLen, msgObj, saltLen, saltObj);
+      return AtomCrypto.argon2(outputSize, type, version, threads, memCost, timeCost, keyLen,
+                               keyObj, extraLen, extraObj, msgLen, msgObj, saltLen, saltObj);
     } catch (ExitException e) {
       e.printStackTrace();
       throw new NockException(e.getMessage(), this);

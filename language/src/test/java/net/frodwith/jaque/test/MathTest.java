@@ -12,7 +12,7 @@ import com.pholser.junit.quickcheck.Property;
 
 import net.frodwith.jaque.data.Cell;
 import net.frodwith.jaque.runtime.Atom;
-import net.frodwith.jaque.runtime.AtomArgon;
+import net.frodwith.jaque.runtime.AtomCrypto;
 import net.frodwith.jaque.runtime.HoonMath;
 import net.frodwith.jaque.exception.ExitException;
 
@@ -132,9 +132,9 @@ public class MathTest {
   public void argon2Examples() throws ExitException {
     Object answer = simple("109.545.755.874.938.691.414.056.967.058.057.110.768.421.325.571.479.303.972.215.676.320.762.769.949.183");
 
-    Object output = AtomArgon.argon2(32L, 117L, 0x13L, 4L, 512_000L, 1L, 0L, 0L, 0L, 0L,
-                                     5L, simple("478.560.413.032"),
-                                     12L, simple("36.348.028.429.745.800.034.457.579.056"));
+    Object output = AtomCrypto.argon2(32L, 117L, 0x13L, 4L, 512_000L, 1L, 0L, 0L, 0L, 0L,
+                                      5L, simple("478.560.413.032"),
+                                      12L, simple("36.348.028.429.745.800.034.457.579.056"));
 
     assertNounEquals("((argon2-urbit:argon2:crypto 32) [5 'hello'] [12 36.348.028.429.745.800.034.457.579.056])",
                      answer, output);

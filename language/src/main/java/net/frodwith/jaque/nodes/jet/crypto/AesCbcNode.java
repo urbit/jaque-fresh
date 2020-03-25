@@ -10,7 +10,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import net.frodwith.jaque.nodes.expression.SlotExpressionNode;
 import net.frodwith.jaque.nodes.SubjectNode;
 import net.frodwith.jaque.runtime.Atom;
-import net.frodwith.jaque.runtime.AtomAes;
+import net.frodwith.jaque.runtime.AtomCrypto;
 import net.frodwith.jaque.runtime.HoonMath;
 import net.frodwith.jaque.exception.ExitException;
 import net.frodwith.jaque.exception.NockException;
@@ -32,7 +32,7 @@ public abstract class AesCbcNode extends SubjectNode {
   protected Object aesCbc(Object key, Object iv, Object msg)
   {
     try {
-      return AtomAes.aes_cbc(getMode(), getKeySize(), key, iv, msg);
+      return AtomCrypto.aes_cbc(getMode(), getKeySize(), key, iv, msg);
     } catch (ExitException e) {
       throw new NockException(e.getMessage(), this);
     }
