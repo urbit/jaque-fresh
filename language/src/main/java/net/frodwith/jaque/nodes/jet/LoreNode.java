@@ -19,7 +19,6 @@ import net.frodwith.jaque.runtime.HoonMath;
 public abstract class LoreNode extends SubjectNode {
   @Specialization
   protected Object lore(Object a) {
-    System.err.println("lore");
     try {
       return doLore(a);
     }

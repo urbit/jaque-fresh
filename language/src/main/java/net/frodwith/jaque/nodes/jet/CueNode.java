@@ -15,7 +15,6 @@ public abstract class CueNode extends SubjectNode {
   @Specialization
   protected Object cue(Object sample) {
     try {
-      System.err.println("cue");
       return HoonSerial.cue(sample);
     }
     catch ( ExitException e ) {

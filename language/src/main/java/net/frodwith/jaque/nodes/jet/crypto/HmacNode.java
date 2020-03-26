@@ -22,11 +22,6 @@ import net.frodwith.jaque.runtime.HoonMath;
 import net.frodwith.jaque.exception.ExitException;
 import net.frodwith.jaque.exception.NockException;
 import net.frodwith.jaque.nodes.op.SlamOpNode;
-import net.frodwith.jaque.printer.SimpleAtomPrinter;
-
-import com.google.common.io.BaseEncoding;
-
-import net.frodwith.jaque.runtime.Murmug;
 
 @NodeChildren({
   @NodeChild(value="hashGate", type=SlotExpressionNode.class),
