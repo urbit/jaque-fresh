@@ -80,6 +80,7 @@ import net.frodwith.jaque.nodes.jet.crypto.EdScalarmultNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdScalarmultBaseNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdAddScalarmultScalarmultBaseNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.EdAddDoubleScalarmultNodeGen;
+import net.frodwith.jaque.nodes.jet.crypto.HmacNodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.Ripemd160NodeGen;
 import net.frodwith.jaque.nodes.jet.crypto.Blake2bNodeGen;
 
@@ -380,6 +381,24 @@ public class ArvoJetDashboard {
                       aesCbcCore("cbcc", 32),
                     });
 
+  private static final ChildCore hmacCore =
+      new ChildCore(
+          "hmac",
+          Axis.get(63L),
+          new HashCode[0],
+          new JetArm[0],
+          new JetHook[0],
+          new ChildCore[] {
+            gate("hmac", (c, ax) -> HmacNodeGen.create(
+                c,
+                new SlotExpressionNode(Axis.SAM_4),
+                new SlotExpressionNode(Axis.get(50L)),
+                new SlotExpressionNode(Axis.get(51L)),
+                new SlotExpressionNode(Axis.SAM_12),
+                new SlotExpressionNode(Axis.SAM_13),
+                new SlotExpressionNode(Axis.SAM_14),
+                new SlotExpressionNode(Axis.SAM_15)))
+          });
 
   // the hoon code for argon2 takes configuration parameters,
   // and then produces a gate. we jet that inner gate.
@@ -463,7 +482,7 @@ public class ArvoJetDashboard {
                       coedCore,
                       aesCore,
 
-                      // hmac  (this seems to be not worth jetting?)
+                      hmacCore,
                       argonCore,
                       blakeCore,
                       ripemdCore,

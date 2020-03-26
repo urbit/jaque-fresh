@@ -20,7 +20,6 @@ import net.frodwith.jaque.exception.NockException;
 public abstract class RepNode extends SubjectNode {
   @Specialization
   protected Object rep(Object a, Object b) {
-    System.err.println("rep");
     try {
       int ai = Atom.requireInt(a);
       if (ai < 256) {
