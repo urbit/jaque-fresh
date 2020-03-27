@@ -64,6 +64,12 @@ import net.frodwith.jaque.nodes.jet.ShanNodeGen;
 import net.frodwith.jaque.nodes.jet.ShayNodeGen;
 import net.frodwith.jaque.nodes.jet.SubNodeGen;
 import net.frodwith.jaque.nodes.jet.TripNodeGen;
+import net.frodwith.jaque.nodes.jet.TurnNodeGen;
+
+import net.frodwith.jaque.nodes.jet.ByPutNodeGen;
+import net.frodwith.jaque.nodes.jet.InHasNodeGen;
+import net.frodwith.jaque.nodes.jet.InPutNodeGen;
+import net.frodwith.jaque.nodes.jet.InTapNodeGen;
 
 import net.frodwith.jaque.nodes.jet.ut.DecapitatedNode;
 import net.frodwith.jaque.nodes.jet.ut.NounsKeyNode;
@@ -544,6 +550,37 @@ public class ArvoJetDashboard {
                       jetLayerFour
                     });
 
+  private static final ChildCore byCore =
+      new ChildCore("by",
+                    Axis.CONTEXT,
+                    new HashCode[0],
+                    new JetArm[0],
+                    new JetHook[0],
+                    new ChildCore[] {
+                      gate("put", (c, ax) ->
+                           ByPutNodeGen.create(new SlotExpressionNode(Axis.CON_SAM),
+                                               new SlotExpressionNode(Axis.SAM_2),
+                                               new SlotExpressionNode(Axis.SAM_3))),
+                    });
+
+
+  private static final ChildCore inCore =
+      new ChildCore("in",
+                    Axis.CONTEXT,
+                    new HashCode[0],
+                    new JetArm[0],
+                    new JetHook[0],
+                    new ChildCore[] {
+                      gate("has", (c, ax) ->
+                           InHasNodeGen.create(new SlotExpressionNode(Axis.CON_SAM),
+                                               new SlotExpressionNode(Axis.SAMPLE))),
+                      gate("put", (c, ax) ->
+                           InPutNodeGen.create(new SlotExpressionNode(Axis.CON_SAM),
+                                               new SlotExpressionNode(Axis.SAMPLE))),
+                      gate("tap", (c, ax) ->
+                           InTapNodeGen.create(new SlotExpressionNode(Axis.CON_SAM)))
+                    });
+
   private static final ChildCore jetLayerTwo =
       new ChildCore("two",
                     Axis.TAIL,
@@ -551,6 +588,11 @@ public class ArvoJetDashboard {
                     new JetArm[0],
                     new JetHook[0],
                     new ChildCore[] {
+                      gate("turn", (c, ax) ->
+                           TurnNodeGen.create(c,
+                                              new SlotExpressionNode(Axis.SAM_2),
+                                              new SlotExpressionNode(Axis.SAM_3))),
+
                       gate("bex", (c, ax) ->
                            BexNodeGen.create(new SlotExpressionNode(Axis.SAMPLE))),
                       gate("can", (c, ax) ->
@@ -626,6 +668,9 @@ public class ArvoJetDashboard {
                            JamNodeGen.create(new SlotExpressionNode(Axis.SAMPLE))),
                       gate("cue", (c, ax) ->
                            CueNodeGen.create(new SlotExpressionNode(Axis.SAMPLE))),
+
+                      byCore,
+                      inCore,
 
                       jetLayerThree
                     });
