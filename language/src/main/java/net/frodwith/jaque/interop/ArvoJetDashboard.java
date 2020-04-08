@@ -53,6 +53,7 @@ import net.frodwith.jaque.nodes.jet.ModNodeGen;
 import net.frodwith.jaque.nodes.jet.MorNodeGen;
 import net.frodwith.jaque.nodes.jet.MugNodeGen;
 import net.frodwith.jaque.nodes.jet.MulNodeGen;
+import net.frodwith.jaque.nodes.jet.MuleNodeGen;
 import net.frodwith.jaque.nodes.jet.PegNodeGen;
 import net.frodwith.jaque.nodes.jet.RapNodeGen;
 import net.frodwith.jaque.nodes.jet.ReapNodeGen;
@@ -527,6 +528,11 @@ public class ArvoJetDashboard {
                            MinkNodeGen.create(c, new SlotExpressionNode(Axis.SAM_4),
                                               new SlotExpressionNode(Axis.SAM_5),
                                               new SlotExpressionNode(Axis.SAM_3))),
+                      gate("mule", (c, ax) ->
+                           MuleNodeGen.create(
+                               c,
+                               new SlotExpressionNode(Axis.CONTEXT),
+                               new SlotExpressionNode(Axis.SAMPLE))),
 
                       jetLayerFive
                     });
